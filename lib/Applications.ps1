@@ -179,13 +179,23 @@ function app_status($app, $global) {
     $status.install_info = $install_info
     $status.failed = (!$install_info -or !$status.version)
     $status.hold = ($install_info.hold -eq $true)
-
-    $manifest = manifest $app $install_info.bucket $install_info.url
     $status.bucket = $install_info.bucket
-    $status.removed = (!$manifest)
-    if ($manifest.version) {
-        $status.latest_version = $manifest.version
+    $status.removed = $false
+
+    $todo = $install_info.url
+    if ($install_info.bucket) {
+        $todo = "$($install_info.bucket)/$app"
+    } else {
+        $todo = $app # This should never happen as there should be always bucket or URL
     }
+    $manifest = $null
+    try {
+        $manifest = (Resolve-ManifestInformation -ApplicationQuery $todo).ManifestObject
+    } catch {
+        $status.removed = $true
+    }
+
+    if ($manifest.version) { $status.latest_version = $manifest.version }
 
     $status.outdated = $false
     if ($status.version -and $status.latest_version) {
@@ -193,6 +203,7 @@ function app_status($app, $global) {
     }
 
     $status.missing_deps = @()
+    # TODO: Should be handled specific version dependency?
     # TODO: Adopt Resolve-ManifestInformation not needed to be fully compatible, consider some simple parsing
     $deps = @(Resolve-DependsProperty -Manifest $manifest) | Where-Object {
         $app, $bucket, $null = parse_app $_
