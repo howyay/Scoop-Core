@@ -48,7 +48,7 @@ function Optimize-SecurityProtocol {
 # Shovel/1.0 (+https://shovel.ash258.com) PowerShell/7.2 (Windows NT 10.0; Win64; x64; Core)
 # Shovel/1.0 (+https://shovel.ash258.com) PowerShell/7.2 (Linux; Linux 5.8.0-1032-raspi #35-Ubuntu SMP PREEMPT Wed Jul 14 10:51:21 UTC 2021;)
 function Get-UserAgent {
-    $shovel = 'Shovel/1.0 (+https://shovel.ash258.com)'
+    $shovel = 'Scoop/1.0 (+https://shovel.ash258.com)'
     $powershellVersion = "PowerShell/$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor)"
     $system = "Windows NT $([System.Environment]::OSVersion.Version)"
     $arch = ''
